@@ -139,7 +139,76 @@ public class Registro {
 		
 	}
 
-	
+public static int insertarCiudadano(Persona pCiudadano) {
+		
+		Conector javaMySQLBasic = new Conector();
+		Connection con = javaMySQLBasic.connectDatabase();
+		int count = 0;
+		try {
+			PreparedStatement stmt = con.prepareStatement("INSERT INTO personas VALUES (?,?,?,?,?,?)");
+			stmt.setString(1, pCiudadano.getDni());
+			stmt.setString(2, pCiudadano.getNombre());
+			stmt.setString(3, pCiudadano.getApellido1());
+			stmt.setString(4, pCiudadano.getApellido2());
+			stmt.setDate(5, Date.valueOf(pCiudadano.getFechaNacimiento()));
+			stmt.setString(6, pCiudadano.getNumTelefono());
+			
+			PreparedStatement stmt2 = con.prepareStatement("INSERT INTO personas VALUES (?,?,?,?,?,?)");
+			stmt2.setString(1, "CCCC");
+			stmt2.setString(2, "Duracell");
+			stmt2.setString(3, "Ikea");
+			stmt2.setString(4, "");
+			stmt2.setDate(5, null);
+			stmt2.setString(6, "tele");
+			
+			
+			con.setAutoCommit(false);
+			
+			count = stmt2.executeUpdate();			
+			count += stmt.executeUpdate();
+			
+			con.commit();
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			if(con != null) {
+				try {
+					con.rollback();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					System.out.println("Error al Rollback");
+					e1.printStackTrace();
+				}
+			}
+		}finally {
+			javaMySQLBasic.cerrarConexion(con);
+		}
+		
+		if(count != 0) {
+			System.out.println(count + " personas insertadas ");
+		}else {
+			System.out.println(" Error ha vevuelto un " + count);
+		}
+		
+		return count;
+		
+		
+		/*Persona p = pMapGente.put(pCiudadano.getDni(), pCiudadano);
+		
+		String mensj = "";
+		
+		if(p == null) {
+			mensj = p + " se ha añadido con exito";
+		}
+		else {
+			mensj = p.getNombre() + " ha sido suplantado por " + pCiudadano.getNombre();
+			throw new Excepciones(mensj);
+		}
+		
+		return mensj;*/
+	}
 	
 
 }
